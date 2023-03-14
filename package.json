@@ -1,0 +1,21 @@
+{
+  "name": "higher-ts",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^4.14.1",
+    "glob": "^9.2.1",
+    "zod": "^3.21.4"
+  },
+  "peerDependencies": {
+    "typescript": "~4.9.5"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.6",
+    "tsup": "^6.6.3",
+    "tsx": "^3.12.3"
+  }
+}
