@@ -1,22 +1,22 @@
 import Fastify, {
-  FastifyListenOptions,
   FastifyReply,
   FastifyRequest,
+  FastifyServerOptions,
 } from "fastify";
 import { Resource, RouteDefinition } from "../../types";
 
 export const setupFastify = async (
   routes: RouteDefinition[],
   context: unknown,
-  options: FastifyListenOptions
+  options?: FastifyServerOptions
 ) => {
-  const fastify = Fastify();
+  const fastifyInstance = Fastify(options);
 
   for (const [filePath, route, method] of routes) {
     console.log(`[${method.toUpperCase()}] ${route}`);
     const { handle, schema }: Resource = await import(filePath);
 
-    fastify[method](
+    fastifyInstance[method](
       route,
       async (request: FastifyRequest, reply: FastifyReply) => {
         if (schema) {
@@ -46,5 +46,5 @@ export const setupFastify = async (
     );
   }
 
-  fastify.listen(options);
+  return fastifyInstance;
 };

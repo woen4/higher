@@ -1,6 +1,6 @@
 {
-  "name": "higher-ts",
-  "version": "0.0.1",
+  "name": "@woen4/higher",
+  "version": "0.0.2",
   "description": "",
   "keywords": [],
   "author": "",
@@ -12,6 +12,9 @@
   },
   "peerDependencies": {
     "typescript": "~4.9.5"
+  },
+  "bin": {
+    "create": "scripts/create.js"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",
