@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type RouteDefinition = [filePath: string, route: string, method: string];
+export type RouteSchema = [filePath: string, route: string, method: string];
 
 export type Resource = {
   handle: (context: unknown, request: unknown, reply: unknown) => unknown;

@@ -3,10 +3,10 @@ import Fastify, {
   FastifyRequest,
   FastifyServerOptions,
 } from "fastify";
-import { Resource, RouteDefinition } from "../../types";
+import { Resource, RouteSchema } from "../../types";
 
 export const setupFastify = async (
-  routes: RouteDefinition[],
+  routes: RouteSchema[],
   context: unknown,
   options?: FastifyServerOptions
 ) => {
@@ -20,7 +20,7 @@ export const setupFastify = async (
       route,
       async (request: FastifyRequest, reply: FastifyReply) => {
         if (schema) {
-          const payload = schema?.safeParse(request.body);
+          const payload = schema.safeParse(request.body);
 
           if (payload?.success) {
             const response = await handle(
@@ -31,7 +31,7 @@ export const setupFastify = async (
 
             reply.send(response);
           } else {
-            reply.status(400).send(payload?.error);
+            reply.status(422).send(payload?.error);
           }
         } else {
           const response = await handle(

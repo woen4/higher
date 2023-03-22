@@ -1,10 +1,13 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "run:example": "tsx watch example/src/main.ts"
+  },
   "dependencies": {
     "fastify": "^4.14.1",
     "glob": "^9.2.1",
@@ -12,9 +15,6 @@
   },
   "peerDependencies": {
     "typescript": "~4.9.5"
-  },
-  "bin": {
-    "create": "scripts/create.js"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",
