@@ -1,20 +1,52 @@
 import Fastify, {
+  FastifyInstance,
   FastifyReply,
   FastifyRequest,
   FastifyServerOptions,
 } from "fastify";
-import { Resource, RouteSchema } from "../../types";
+import { MiddlewareSchema, Resource, RouteSchema } from "../../types";
+import type { Server } from "connect";
 
-export const setupFastify = async (
-  routes: RouteSchema[],
-  context: unknown,
-  options?: FastifyServerOptions
-) => {
-  const fastifyInstance = Fastify(options);
+type SetupFastifyParams = {
+  routes: RouteSchema[];
+  middlewares: MiddlewareSchema[];
+  providers: {
+    filePath: string;
+    getModule: () => Promise<any>;
+  };
+  options?: FastifyServerOptions;
+};
 
-  for (const [filePath, route, method] of routes) {
+export const setupFastify = async (params: SetupFastifyParams) => {
+  const fastifyInstance = Fastify(params.options);
+
+  await registerRoutes(params, fastifyInstance);
+
+  await registerMiddlewares(params, fastifyInstance);
+
+  return fastifyInstance;
+};
+
+async function registerMiddlewares(
+  { middlewares }: SetupFastifyParams,
+  fastifyInstance: FastifyInstance
+) {
+  await fastifyInstance.register(require("@fastify/middie"));
+
+  for (const { scope, getModule } of middlewares) {
+    const { handle } = await getModule();
+    (fastifyInstance as unknown as Server).use(scope, handle);
+  }
+}
+
+async function registerRoutes(
+  { routes, providers }: SetupFastifyParams,
+  fastifyInstance: FastifyInstance
+) {
+  const context = await providers.getModule();
+  for (const { filePath, route, method, getModule } of routes) {
     console.log(`[${method.toUpperCase()}] ${route}`);
-    const { handle, schema }: Resource = await import(filePath);
+    const { handle, schema }: Resource = await getModule();
 
     fastifyInstance[method](
       route,
@@ -31,7 +63,7 @@ export const setupFastify = async (
 
             reply.send(response);
           } else {
-            reply.status(422).send(payload?.error);
+            reply.status(422).send("error" /* payload!.error as any */);
           }
         } else {
           const response = await handle(
@@ -45,6 +77,4 @@ export const setupFastify = async (
       }
     );
   }
-
-  return fastifyInstance;
-};
+}

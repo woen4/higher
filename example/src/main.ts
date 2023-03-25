@@ -6,5 +6,5 @@ async function main() {
   fastifyInstance.listen({ port: 3000 });
   console.log("Server is listening");
 }
-
+/*  */
 main();

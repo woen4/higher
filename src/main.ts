@@ -1,24 +1,32 @@
 import glob from "glob";
 import path from "path";
 import { setupFastify } from "./adapters/routers/fastify";
-import { RouteSchema } from "./types";
+import { MiddlewareSchema, RouteSchema } from "./types";
 import { FastifyServerOptions } from "fastify";
 import fs from "fs";
+import { schema } from "./schema";
 
 export async function bootstrap(
   dirname: string,
   options?: FastifyServerOptions
 ) {
+  /* Load routes */
+  return setupFastify({
+    ...schema,
+    options,
+  });
+}
+
+export async function mapDirectory(dirname: string) {
   const directoryFiles = await getDirectoryFiles(dirname);
 
-  const routes = directoryFiles
-    .map(parseFilePath)
-    .filter((route) => !!route) as RouteSchema[];
+  const routes = getRoutes(directoryFiles);
+  const middlewares = getMiddlewares(directoryFiles);
 
-  const context = await getProviders(dirname);
+  const providers = getProviders(dirname);
 
   /* Load routes */
-  return setupFastify(routes, context, options);
+  return { routes, middlewares, providers };
 }
 
 function getDirectoryFiles(dirname: string) {
@@ -26,22 +34,45 @@ function getDirectoryFiles(dirname: string) {
   return glob(filesPaths);
 }
 
-function parseFilePath(filePath: string): RouteSchema | undefined {
-  // Ex: /home/pc/user/Documents/project_name/src/modules/users... -> /modules/users
-  const filePathFromSrc = filePath.split("src")[1];
+function getMiddlewares(directoryFiles: string[]): MiddlewareSchema[] {
+  const middlewares: MiddlewareSchema[] = [];
 
-  // Match route and method -> /modules/user/get.ts -> /users, get
-  const matched = filePathFromSrc.match(
-    /modules(.*?)\/(get|post|patch|delete|put)\.ts/
-  );
+  for (const filePath of directoryFiles) {
+    const isMiddleware = filePath.endsWith("/middleware.ts");
 
-  if (matched) {
-    const [_, route, method] = matched;
-
-    const parsedRoute = route === "" ? "/" : route;
-
-    return [filePath, parsedRoute, method];
+    if (isMiddleware) {
+      middlewares.push({
+        scope: filePath.match(/src\/modules(.*?)\/middleware.ts/)![1],
+        filePath,
+      });
+    }
   }
+
+  return middlewares;
+}
+
+function getRoutes(directoryFiles: string[]): RouteSchema[] {
+  const routes: RouteSchema[] = [];
+
+  for (const filePath of directoryFiles) {
+    // Ex: /home/pc/user/Documents/project_name/src/modules/users... -> /modules/users
+    const filePathFromSrc = filePath.split("src")[1];
+
+    // Match route and method -> /modules/user/get.ts -> /users, get
+    const matched = filePathFromSrc.match(
+      /modules(.*?)\/(get|post|patch|delete|put)\.ts/
+    );
+
+    if (matched) {
+      const [_, route, method] = matched;
+
+      const parsedRoute = route === "" ? "/" : route;
+
+      routes.push({ filePath, route: parsedRoute, method });
+    }
+  }
+
+  return routes;
 }
 
 function getProviders(dirname: string) {
@@ -52,5 +83,5 @@ function getProviders(dirname: string) {
       "You need a provider folder with a index.ts file inside, in 'src' directory"
     );
 
-  return import(providersPath);
+  return { filePath: providersPath };
 }

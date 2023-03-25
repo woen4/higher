@@ -6,9 +6,11 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "run:example": "tsx watch example/src/main.ts"
+    "dev:example": "tsx scripts/dev.ts"
   },
   "dependencies": {
+    "@fastify/middie": "^8.1.0",
+    "chokidar": "^3.5.3",
     "fastify": "^4.14.1",
     "glob": "^9.2.1",
     "zod": "^3.21.4"
@@ -17,7 +19,11 @@
     "typescript": "~4.9.5"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.35",
+    "@types/execa": "^2.0.0",
     "@types/node": "^18.14.6",
+    "@types/prettier": "^2.7.2",
+    "prettier": "^2.8.6",
     "tsup": "^6.6.3",
     "tsx": "^3.12.3"
   }
