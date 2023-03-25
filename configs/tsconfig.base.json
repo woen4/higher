@@ -13,5 +13,5 @@
     "strictBindCallApply": false
   },
 
-  "files": ["../src/index.ts"]
+  "include": ["../src", "../index.ts"]
 }

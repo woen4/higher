@@ -1,22 +1,22 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.8",
+  "version": "0.0.18",
   "description": "",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bin": "cli/index.js",
+  "bin": "./lib/cjs/src/cli/index.js",
   "types": "./lib/cjs/types/index.d.ts",
   "main": "./lib/cjs/index.js",
   "exports": {
     ".": {
       "import": {
         "types": "./lib/esm/types/index.d.ts",
-        "default": "./lib/esm/index.mjs"
+        "default": "./lib/esm/src/index.mjs"
       },
       "require": {
         "types": "./lib/cjs/types/index.d.ts",
-        "default": "./lib/cjs/index.js"
+        "default": "./lib/cjs/src/index.js"
       }
     }
   },
@@ -26,7 +26,7 @@
   "scripts": {
     "clean": "rm -rf ./lib",
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc -p ./configs/tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
+    "build:esm": "tsc -p ./configs/tsconfig.esm.json",
     "build:cjs": "tsc -p ./configs/tsconfig.cjs.json",
     "prepack": "npm run build"
   },
