@@ -1,11 +1,24 @@
-import { FastifyServerOptions } from "fastify";
-import { setupFastify, SetupFastifyParams } from "./adapters/routers/fastify";
 import { schema } from "../generated/schema";
+import { Hono } from "hono";
 
-export async function bootstrap(options?: FastifyServerOptions) {
-  /* Load routes */
-  return setupFastify({
-    ...schema,
-    options,
-  } as SetupFastifyParams);
-}
+type Bootstrap = <T extends "hono" | "fastify">(
+  router: T,
+  options: T extends "hono" ? Pick<Hono, "router" | "strict"> : any
+) => Promise<any>;
+
+export const bootstrap: Bootstrap = async (router, options) => {
+  if (router === "hono") {
+    const { setupHono } = await import("./adapters/routers/hono");
+    return setupHono({
+      ...schema,
+      options,
+    } as any);
+  } else {
+    /*  const { setupFastify } = await import("./adapters/routers/fastify");
+
+    return setupFastify({
+      ...schema,
+      options,
+    } as any); */
+  }
+};

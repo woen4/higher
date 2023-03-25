@@ -14,11 +14,10 @@ export type MiddlewareSchema = {
 };
 
 export type Resource = {
-  handle: (context: unknown, request: unknown, reply: unknown) => unknown;
+  handle: (context: unknown, request: unknown, reply?: unknown) => unknown;
   schema?: z.AnyZodObject;
 };
 
 export type HigherRequest<T extends z.ZodType<any, any, any>> = {
-  fastifyRequest: import("fastify").FastifyRequest;
   payload: import("zod").z.infer<T>;
 };

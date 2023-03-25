@@ -10,6 +10,7 @@ specifiers:
   chokidar: ^3.5.3
   fastify: ^4.14.1
   glob: ^9.2.1
+  hono: ^3.1.2
   prettier: ^2.8.6
   tsup: ^6.6.3
   tsx: ^3.12.3
@@ -22,6 +23,7 @@ dependencies:
   chokidar: 3.5.3
   fastify: 4.14.1
   glob: 9.2.1
+  hono: 3.1.2
   tsup: 6.6.3_typescript@5.0.2
   tsx: 3.12.5
   typescript: 5.0.2
@@ -742,6 +744,11 @@ packages:
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
+    dev: false
+
+  /hono/3.1.2:
+    resolution: {integrity: sha512-keNMGSlBX2VbwD5gF10Xu0zuUm9mTy1HWctIhuom8FJEJY6aKo1Bb/vQXTEjBupKDG7MJi2aG05YMo01GjkMQA==}
+    engines: {node: '>=16.0.0'}
     dev: false
 
   /human-signals/2.1.0:
