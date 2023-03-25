@@ -18,7 +18,7 @@ export type Resource = {
   schema?: z.AnyZodObject;
 };
 
-export type HigherRequest<T = unknown> = {
+export type HigherRequest<T extends z.ZodType<any, any, any>> = {
   fastifyRequest: import("fastify").FastifyRequest;
   payload: import("zod").z.infer<T>;
 };

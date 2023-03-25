@@ -4,7 +4,7 @@ import { setupFastify } from "./adapters/routers/fastify";
 import { MiddlewareSchema, RouteSchema } from "./types";
 import { FastifyServerOptions } from "fastify";
 import fs from "fs";
-import { schema } from "./schema";
+import { schema } from "./generated/schema";
 
 export async function bootstrap(
   dirname: string,
@@ -14,7 +14,7 @@ export async function bootstrap(
   return setupFastify({
     ...schema,
     options,
-  });
+  } as any);
 }
 
 export async function mapDirectory(dirname: string) {
@@ -44,7 +44,7 @@ function getMiddlewares(directoryFiles: string[]): MiddlewareSchema[] {
       middlewares.push({
         scope: filePath.match(/src\/modules(.*?)\/middleware.ts/)![1],
         filePath,
-      });
+      } as any);
     }
   }
 
@@ -68,7 +68,7 @@ function getRoutes(directoryFiles: string[]): RouteSchema[] {
 
       const parsedRoute = route === "" ? "/" : route;
 
-      routes.push({ filePath, route: parsedRoute, method });
+      routes.push({ filePath, route: parsedRoute, method } as any);
     }
   }
 
