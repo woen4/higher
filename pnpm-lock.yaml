@@ -6,6 +6,7 @@ specifiers:
   '@types/execa': ^2.0.0
   '@types/node': ^18.14.6
   '@types/prettier': ^2.7.2
+  '@vercel/ncc': ^0.36.1
   chokidar: ^3.5.3
   fastify: ^4.14.1
   glob: ^9.2.1
@@ -17,6 +18,7 @@ specifiers:
 
 dependencies:
   '@fastify/middie': 8.1.0
+  '@vercel/ncc': 0.36.1
   chokidar: 3.5.3
   fastify: 4.14.1
   glob: 9.2.1
@@ -324,6 +326,11 @@ packages:
   /@types/prettier/2.7.2:
     resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
     dev: true
+
+  /@vercel/ncc/0.36.1:
+    resolution: {integrity: sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw==}
+    hasBin: true
+    dev: false
 
   /abort-controller/3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}

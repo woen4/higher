@@ -1,6 +1,6 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "",
   "keywords": [],
   "author": "",
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@fastify/middie": "^8.1.0",
+    "@vercel/ncc": "^0.36.1",
     "chokidar": "^3.5.3",
     "fastify": "^4.14.1",
     "glob": "^9.2.1",

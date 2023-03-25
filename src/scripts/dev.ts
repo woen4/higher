@@ -1,7 +1,7 @@
 import path from "path";
 import { exec } from "child_process";
 import { watch } from "chokidar";
-import { mapDirectory } from "../index";
+import { mapDirectory } from "../core/directoryMapper";
 import { writeFile } from "fs/promises";
 
 export const devScript = (projectDir: string) => {
@@ -27,9 +27,9 @@ export const devScript = (projectDir: string) => {
       `exports.schema = ${updatedSchema}`
     );
 
-    exec("pnpm tsup src --watch --onSuccess 'node dist/index.js'").stdout.pipe(
-      process.stdout
-    );
+    exec(
+      "npm exec tsup src --watch --onSuccess 'node dist/index.js'"
+    ).stdout.pipe(process.stdout);
   };
 
   watch(path.resolve(projectDir))

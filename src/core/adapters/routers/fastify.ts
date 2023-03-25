@@ -4,10 +4,10 @@ import Fastify, {
   FastifyRequest,
   FastifyServerOptions,
 } from "fastify";
-import { MiddlewareSchema, Resource, RouteSchema } from "../../types";
+import { MiddlewareSchema, Resource, RouteSchema } from "../../../types";
 import type { Server } from "connect";
 
-type SetupFastifyParams = {
+export type SetupFastifyParams = {
   routes: RouteSchema[];
   middlewares: MiddlewareSchema[];
   providers: {

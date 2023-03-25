@@ -1,21 +1,7 @@
 import glob from "glob";
 import path from "path";
-import { setupFastify } from "./adapters/routers/fastify";
-import { MiddlewareSchema, RouteSchema } from "./types";
-import { FastifyServerOptions } from "fastify";
+import { MiddlewareSchema, RouteSchema } from "../types";
 import fs from "fs";
-import { schema } from "./generated/schema";
-
-export async function bootstrap(
-  dirname: string,
-  options?: FastifyServerOptions
-) {
-  /* Load routes */
-  return setupFastify({
-    ...schema,
-    options,
-  } as any);
-}
 
 export async function mapDirectory(dirname: string) {
   const directoryFiles = await getDirectoryFiles(dirname);
