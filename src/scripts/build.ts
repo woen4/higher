@@ -21,5 +21,5 @@ export const buildScript = async (projectDir: string) => {
     `exports.schema = ${updatedSchema}`
   );
 
-  exec("npm exec ncc build src/index.ts").stdout.pipe(process.stdout);
+  exec("npx ncc build src/index.ts").stdout.pipe(process.stdout);
 };

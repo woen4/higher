@@ -5,8 +5,10 @@ const [node, filePath, command] = process.argv;
 
 switch (command) {
   case "dev":
-    devScript(process.cwd());
+    devScript(process.cwd(), "build");
+    break;
 
   case "build":
     buildScript(process.cwd());
+    break;
 }

@@ -4,13 +4,13 @@ export type RouteSchema = {
   filePath: string;
   route: string;
   method: string;
-  getModule: () => Promise<any>;
+  getModule: () => any;
 };
 
 export type MiddlewareSchema = {
   filePath: string;
   scope: string;
-  getModule: () => Promise<any>;
+  getModule: () => any;
 };
 
 export type Resource = {

@@ -34,7 +34,7 @@ async function registerMiddlewares(
   await fastifyInstance.register(require("@fastify/middie"));
 
   for (const { scope, getModule } of middlewares) {
-    const { handle } = await getModule();
+    const { handle } = getModule();
     (fastifyInstance as unknown as Server).use(scope, handle);
   }
 }
@@ -43,10 +43,10 @@ async function registerRoutes(
   { routes, providers }: SetupFastifyParams,
   fastifyInstance: FastifyInstance
 ) {
-  const context = await providers.getModule();
+  const context = providers.getModule();
   for (const { filePath, route, method, getModule } of routes) {
     console.log(`[${method.toUpperCase()}] ${route}`);
-    const { handle, schema }: Resource = await getModule();
+    const { handle, schema }: Resource = getModule();
 
     fastifyInstance[method](
       route,

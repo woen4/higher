@@ -4,7 +4,7 @@ import { watch } from "chokidar";
 import { mapDirectory } from "../core/directoryMapper";
 import { writeFile } from "fs/promises";
 
-export const devScript = (projectDir: string) => {
+export const devScript = (projectDir: string, outDir: string) => {
   let isReady = false;
 
   const generateSchema = async () => {
@@ -20,7 +20,7 @@ export const devScript = (projectDir: string) => {
       )
       //Remove .ts extension in import
       .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-      .replace(/src/g, "dist");
+      .replace(/src/g, outDir);
 
     await writeFile(
       path.resolve(__dirname, "..", "generated", "schema.js"),
@@ -28,7 +28,7 @@ export const devScript = (projectDir: string) => {
     );
 
     exec(
-      "npm exec tsup src --watch --onSuccess 'node dist/index.js'"
+      `npx tsup src --watch --onSuccess 'node ${outDir}/index.js' -d ${outDir}`
     ).stdout.pipe(process.stdout);
   };
 

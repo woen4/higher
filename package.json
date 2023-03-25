@@ -1,6 +1,6 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.19",
+  "version": "0.0.27",
   "description": "",
   "keywords": [],
   "author": "",
@@ -12,11 +12,11 @@
     ".": {
       "import": {
         "types": "./lib/esm/types/index.d.ts",
-        "default": "./lib/esm/src/index.mjs"
+        "default": "./lib/esm/index.mjs"
       },
       "require": {
         "types": "./lib/cjs/types/index.d.ts",
-        "default": "./lib/cjs/src/index.js"
+        "default": "./lib/cjs/index.js"
       }
     }
   },
