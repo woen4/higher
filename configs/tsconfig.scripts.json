@@ -15,8 +15,8 @@
     "target": "ES6",
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "outDir": "../lib/esm/src",
-    "declarationDir": "../lib/esm/types"
+    "outDir": "../lib/src",
+    "declarationDir": "../lib/types"
   },
 
   "include": ["../src/scripts", "../src/cli/index.ts"]
