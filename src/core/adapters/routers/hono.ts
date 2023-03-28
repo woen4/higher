@@ -11,17 +11,17 @@ export type SetupHonoParams = {
   options?: Pick<Hono, "router" | "strict">;
 };
 
-export const setupHono = async (params: SetupHonoParams) => {
+export const setupHono = (params: SetupHonoParams) => {
   const honoInstance = new Hono(params.options);
 
-  await registerRoutes(params, honoInstance);
+  registerRoutes(params, honoInstance);
 
-  await registerMiddlewares(params, honoInstance);
+  registerMiddlewares(params, honoInstance);
 
   return honoInstance;
 };
 
-async function registerMiddlewares(
+function registerMiddlewares(
   { middlewares }: SetupHonoParams,
   honoInstance: Hono<Env, {}, "">
 ) {
@@ -31,7 +31,7 @@ async function registerMiddlewares(
   }
 }
 
-async function registerRoutes(
+function registerRoutes(
   { routes, providers }: SetupHonoParams,
   honoInstance: Hono<Env, {}, "">
 ) {
@@ -40,7 +40,7 @@ async function registerRoutes(
     console.log(`[${method.toUpperCase()}] ${route}`);
     const { handle, schema }: Resource = getModule();
 
-    honoInstance.get(route, async (ctx: Context<Env, string, {}>) => {
+    honoInstance[method](route, async (ctx: Context<Env, string, {}>) => {
       if (schema) {
         const payload = schema.safeParse(ctx.body);
 
@@ -50,15 +50,16 @@ async function registerRoutes(
             httpContext: ctx,
           });
 
-          ctx.text(JSON.stringify(response));
+          return ctx.text(JSON.stringify(response));
         } else {
-          ctx.text(JSON.stringify(payload.error), 422);
+          return ctx.text(JSON.stringify(payload.error), 422);
         }
       } else {
         const response = await handle(context, { httpContext: ctx });
 
-        ctx.text(JSON.stringify(response));
+        return ctx.text(JSON.stringify(response));
       }
     });
   }
+  return honoInstance;
 }

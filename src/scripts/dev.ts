@@ -1,44 +1,26 @@
-import path from "path";
 import { exec } from "child_process";
-import { watch } from "chokidar";
-import { mapDirectory } from "../core/directoryMapper";
-import { writeFile } from "fs/promises";
+import { generateSchemaScript } from "./generateSchema";
 
-export const devScript = (projectDir: string, outDir: string) => {
-  let isReady = false;
+export const devScript = async (
+  projectDir: string,
+  outDir: string,
+  isHonoRouter: boolean
+) => {
+  await generateSchemaScript(projectDir, outDir);
 
-  const generateSchema = async () => {
-    if (!isReady) return;
+  if (isHonoRouter) {
+    const buildCProcess = exec(`npx tsup src --watch -d ${outDir}`);
+    buildCProcess.stderr.pipe(process.stderr);
+    buildCProcess.stdout.pipe(process.stdout);
 
-    const schema = await mapDirectory(path.resolve(projectDir, "src"));
-
-    const updatedSchema = JSON.stringify(schema)
-      //Apply getModule property
-      .replace(
-        /"filePath":\s*"([^"]+)?"/g,
-        '"filePath": "$1", "getModule": () => require("$1")'
-      )
-      //Remove .ts extension in import
-      .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-      .replace(/src/g, outDir);
-
-    await writeFile(
-      path.resolve(__dirname, "..", "generated", "schema.js"),
-      `exports.schema = ${updatedSchema}`
-    );
-
-    exec(
+    const cProcess = exec(`npx wrangler dev src/index.ts`);
+    cProcess.stderr.pipe(process.stderr);
+    cProcess.stdout.pipe(process.stdout);
+  } else {
+    const cProcess = exec(
       `npx tsup src --watch --onSuccess 'node ${outDir}/index.js' -d ${outDir}`
-    ).stdout.pipe(process.stdout);
-  };
-
-  watch(path.resolve(projectDir))
-    .on("ready", () => {
-      isReady = true;
-      generateSchema();
-    })
-    .on("add", generateSchema)
-    .on("addDir", generateSchema)
-    .on("unlink", generateSchema)
-    .on("unlinkDir", generateSchema);
+    );
+    cProcess.stderr.pipe(process.stderr);
+    cProcess.stdout.pipe(process.stdout);
+  }
 };

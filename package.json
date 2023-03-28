@@ -1,6 +1,6 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.30",
+  "version": "0.0.51",
   "description": "",
   "keywords": [],
   "author": "",
@@ -26,20 +26,21 @@
   "scripts": {
     "clean": "rm -rf ./lib",
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc -p ./configs/tsconfig.esm.json",
+    "build:esm": "tsc -p ./configs/tsconfig.esm.json && tsc -p ./configs/tsconfig.scripts.json",
     "build:cjs": "tsc -p ./configs/tsconfig.cjs.json",
     "prepack": "npm run build"
   },
-  "dependencies": {
+  "optionalDependencies": {
     "@fastify/middie": "^8.1.0",
-    "@vercel/ncc": "^0.36.1",
-    "chokidar": "^3.5.3",
     "fastify": "^4.14.1",
+    "hono": "^3.1.2"
+  },
+  "dependencies": {
+    "@vercel/ncc": "^0.36.1",
     "glob": "^9.2.1",
-    "hono": "^3.1.2",
     "tsup": "^6.6.3",
-    "tsx": "^3.12.3",
     "typescript": "^5.0.2",
+    "wrangler": "^2.13.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {

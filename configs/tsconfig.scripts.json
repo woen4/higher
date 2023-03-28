@@ -10,8 +10,14 @@
     "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": false,
-    "strictBindCallApply": false
+    "strictBindCallApply": false,
+    "lib": ["ES6", "DOM"],
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "../lib/esm/src",
+    "declarationDir": "../lib/esm/types"
   },
 
-  "include": ["../src", "../index.ts"]
+  "include": ["../src/scripts", "../src/cli/index.ts"]
 }
