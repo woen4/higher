@@ -3,7 +3,7 @@ import { z } from "zod";
 export type RouteSchema = {
   filePath: string;
   route: string;
-  method: string;
+  method: "get" | "post" | "patch" | "delete" | "patch" | "options";
   getModule: () => any;
 };
 
@@ -19,5 +19,6 @@ export type Resource = {
 };
 
 export type HigherRequest<T extends z.ZodType<any, any, any>> = {
-  payload: import("zod").z.infer<T>;
+  body: import("zod").z.infer<T>;
+  rawBody: unknown;
 };

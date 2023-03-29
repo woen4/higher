@@ -25,20 +25,6 @@ export const generateSchemaScript = async (
     schemaFileContent
   );
 
-  await writeFile(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "..",
-      "esm",
-      "src",
-      "generated",
-      "schema.js"
-    ),
-    schemaFileContent
-  );
-
   console.log("Generated route schema !");
 
   /*   watch(path.resolve(projectDir))

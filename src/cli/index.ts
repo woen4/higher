@@ -9,6 +9,6 @@ switch (command) {
     break;
 
   case "build":
-    buildScript(process.cwd());
+    buildScript(process.cwd(), "dist");
     break;
 }

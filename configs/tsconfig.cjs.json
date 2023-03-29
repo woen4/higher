@@ -11,13 +11,12 @@
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": false,
     "strictBindCallApply": false,
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "outDir": "../lib",
-    "declarationDir": "../lib/types"
+    "lib": ["ES6", "DOM"],
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "../lib/cjs",
+    "declarationDir": "../lib/cjs/types"
   },
-
   "include": ["../src", "../index.ts"]
 }

@@ -2,24 +2,12 @@ import path from "path";
 import { exec } from "child_process";
 import { mapDirectory } from "../core/directoryMapper";
 import { writeFile } from "fs/promises";
+import { generateSchemaScript } from "./generateSchema";
 
-export const buildScript = async (projectDir: string) => {
-  const schema = await mapDirectory(path.resolve(projectDir, "src"));
+export const buildScript = async (projectDir: string, outDir: string) => {
+  await generateSchemaScript(projectDir, outDir);
 
-  const updatedSchema = JSON.stringify(schema)
-    //Apply getModule property
-    .replace(
-      /"filePath":\s*"([^"]+)?"/g,
-      '"filePath": "$1", "getModule": () => require("$1")'
-    )
-    //Remove .ts extension in import
-    .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-    .replace(/src/g, "dist");
-
-  await writeFile(
-    path.resolve(__dirname, "..", "generated", "schema.js"),
-    `exports.schema = ${updatedSchema}`
-  );
-
-  exec("npx ncc build src/index.ts").stdout.pipe(process.stdout);
+  const buildCProcess = exec(`npx tsup src -d ${outDir}`);
+  buildCProcess.stderr.pipe(process.stderr);
+  buildCProcess.stdout.pipe(process.stdout);
 };

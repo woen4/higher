@@ -11,13 +11,13 @@
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": false,
     "strictBindCallApply": false,
-    "lib": ["ES6", "DOM"],
-    "target": "ES6",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "outDir": "../lib/esm/src",
+    "lib": ["ES2022", "DOM"],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "../lib/esm",
     "declarationDir": "../lib/esm/types"
   },
 
-  "include": ["../src/scripts", "../src/cli/index.ts"]
+  "include": ["../src", "../index.ts"]
 }
