@@ -1,4 +1,4 @@
-import { writeFile } from "fs/promises";
+import { writeFile } from "fs";
 import path from "path";
 import { mapDirectory } from "../core/directoryMapper";
 
@@ -16,16 +16,34 @@ export const generateSchemaScript = async (
     )
     //Remove .ts extension in import
     .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-    .replace(/src/g, outDir);
+    //Rename path directory
+    .replace(/(src)\/((modules)|(providers)|(middlewares))/g, `${outDir}/$2`);
 
   const schemaFileContent = `exports.schema = ${updatedSchema}`;
 
-  await writeFile(
+  writeFile(
     path.resolve(__dirname, "..", "generated", "schema.js"),
-    schemaFileContent
+    schemaFileContent,
+    () => {
+      console.log("Generated route schema !");
+    }
   );
-
-  console.log("Generated route schema !");
+  writeFile(
+    path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "esm",
+      "src",
+      "generated",
+      "schema.js"
+    ),
+    schemaFileContent,
+    () => {
+      console.log("Generated route schema !");
+    }
+  );
 
   /*   watch(path.resolve(projectDir))
     .on("ready", () => {

@@ -42,7 +42,7 @@ function getRoutes(directoryFiles: string[]): RouteSchema[] {
 
   for (const filePath of directoryFiles) {
     // Ex: /home/pc/user/Documents/project_name/src/modules/users... -> /modules/users
-    const filePathFromSrc = filePath.split("src")[1];
+    const filePathFromSrc = filePath.split("src").reverse()[0];
 
     // Match route and method -> /modules/user/get.ts -> /users, get
     const matched = filePathFromSrc.match(

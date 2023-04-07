@@ -1,7 +1,12 @@
-import Fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import Fastify, {
+  FastifyInstance,
+  FastifyReply,
+  FastifyServerOptions,
+} from "fastify";
 import { MiddlewareSchema, Resource, RouteSchema } from "../../../types";
 import type { Server } from "connect";
 import middie from "@fastify/middie";
+import { z } from "zod";
 
 export type SetupFastifyParams = {
   routes: RouteSchema[];
@@ -27,13 +32,32 @@ function registerMiddlewares(
   { middlewares }: SetupFastifyParams,
   fastifyInstance: FastifyInstance
 ) {
-  fastifyInstance.register(middie).then(() => {
+  for (const { scope, getModule } of middlewares) {
+    fastifyInstance.addHook("preParsing", async (request) => {
+      if (request.url.includes(scope)) {
+        const { handle } = getModule();
+        await handle(request);
+      }
+    });
+  }
+
+  /*  fastifyInstance.register(middie, { hook: "preParsing" }).then(() => {
     for (const { scope, getModule } of middlewares) {
       const { handle } = getModule();
       (fastifyInstance as unknown as Server).use(scope, handle);
     }
-  });
+  }); */
 }
+const validate = async (schema: z.AnyZodObject, payload: unknown) => {
+  if (!schema) return payload;
+  const bodyParsed = schema.safeParse(payload);
+
+  if (bodyParsed?.success === true) {
+    return bodyParsed.data;
+  } else {
+    throw bodyParsed.error;
+  }
+};
 
 function registerRoutes(
   { routes, providers }: SetupFastifyParams,
@@ -41,28 +65,33 @@ function registerRoutes(
 ) {
   const context = providers.getModule();
   for (const { route, method, getModule } of routes) {
-    console.log(`[${method.toUpperCase()}] ${route}`);
-    const { handle, schema }: Resource = getModule();
+    const parsedRoute = route.replace(/\[(.*?)\]/g, ":$1");
 
-    fastifyInstance[method](route, async (request, reply) => {
-      if (schema) {
-        const bodyParsed = schema.safeParse(request.body);
+    console.log(`[${method.toUpperCase()}] ${parsedRoute}`);
 
-        if (bodyParsed?.success === true) {
-          const response = await handle(
-            context,
-            { ...request, body: bodyParsed, rawBody: request.body },
-            reply
-          );
+    const { handle, schema, querySchema }: Resource = getModule();
 
-          reply.send(response);
-        } else {
-          reply.status(422).send(bodyParsed.error);
-        }
-      } else {
-        const response = await handle(context, { ...request }, reply);
+    fastifyInstance[method](parsedRoute, async (request, reply) => {
+      try {
+        const queryData = await validate(querySchema, request.query);
+        const bodyData = await validate(schema, request.body);
+
+        const response = await handle(
+          context,
+          {
+            ...request,
+            body: bodyData,
+            rawBody: request.body,
+            query: queryData,
+            rawQuery: request.query,
+          },
+          reply
+        );
 
         reply.send(response);
+      } catch (e) {
+        reply.status(500).send("Internal Error");
+        console.error(e);
       }
     });
   }

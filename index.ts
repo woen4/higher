@@ -1,2 +1,2 @@
 export { bootstrap } from "./src/core/bootstrap";
-export { HigherRequest } from "./src/types";
+export { HigherRequest, HigherResponse } from "./src/types";

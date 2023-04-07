@@ -1,7 +1,8 @@
+import { FastifyServerOptions } from "fastify";
 import { schema } from "../generated/schema";
-import { setupFastify, SetupFastifyParams } from "./adapters/routers/fastify";
+import { setupFastify } from "./adapters/routers/fastify";
 
-export const bootstrap = (options?: SetupFastifyParams) =>
+export const bootstrap = (options?: FastifyServerOptions) =>
   setupFastify({
     ...schema,
     options,
