@@ -1,11 +1,10 @@
-import Fastify, {
-  FastifyInstance,
-  FastifyReply,
-  FastifyServerOptions,
-} from "fastify";
-import { MiddlewareSchema, Resource, RouteSchema } from "../../../types";
-import type { Server } from "connect";
-import middie from "@fastify/middie";
+import Fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import {
+  MiddlewareSchema,
+  MiddlewareResource,
+  Resource,
+  RouteSchema,
+} from "../../../types";
 import { z } from "zod";
 
 export type SetupFastifyParams = {
@@ -13,30 +12,46 @@ export type SetupFastifyParams = {
   middlewares: MiddlewareSchema[];
   providers: {
     filePath: string;
-    getModule: () => Promise<any>;
+    getModule: () => Promise<MiddlewareResource>;
   };
   options?: FastifyServerOptions;
 };
 
-export const setupFastify = (params: SetupFastifyParams) => {
-  const fastifyInstance = Fastify(params.options);
+export const setupFastify = ({
+  routes,
+  middlewares,
+  providers,
+  options,
+}: SetupFastifyParams) => {
+  const fastifyInstance = Fastify(options);
 
-  registerRoutes(params, fastifyInstance);
+  const context = providers.getModule();
 
-  registerMiddlewares(params, fastifyInstance);
+  registerRoutes(routes, context, fastifyInstance);
+
+  registerMiddlewares(middlewares, context, fastifyInstance);
 
   return fastifyInstance;
 };
 
 function registerMiddlewares(
-  { middlewares }: SetupFastifyParams,
+  middlewares: MiddlewareSchema[],
+  context: unknown,
   fastifyInstance: FastifyInstance
 ) {
   for (const { scope, getModule } of middlewares) {
+    //
     fastifyInstance.addHook("preParsing", async (request) => {
       if (request.url.includes(scope)) {
-        const { handle } = getModule();
-        await handle(request);
+        const { handle, excludePaths }: MiddlewareResource = getModule();
+        [];
+        const shouldSkip = excludePaths.some((path) =>
+          request.url.includes(path)
+        );
+
+        if (!shouldSkip) return;
+
+        await handle(context, request);
       }
     });
   }
@@ -60,39 +75,46 @@ const validate = async (schema: z.AnyZodObject, payload: unknown) => {
 };
 
 function registerRoutes(
-  { routes, providers }: SetupFastifyParams,
+  routes: RouteSchema[],
+  context: any,
   fastifyInstance: FastifyInstance
 ) {
-  const context = providers.getModule();
-  for (const { route, method, getModule } of routes) {
-    const parsedRoute = route.replace(/\[(.*?)\]/g, ":$1");
+  import("chalk").then(({ default: chalk }) => {
+    for (const { route, method, getModule } of routes) {
+      const parsedRoute = route.replace(/\[(.*?)\]/g, ":$1");
 
-    console.log(`[${method.toUpperCase()}] ${parsedRoute}`);
+      console.log(
+        chalk.green(`Mapped route `) +
+          chalk.yellowBright("-") +
+          chalk.green(` ${method.toUpperCase()}`) +
+          chalk.yellowBright(` ${parsedRoute}`)
+      );
 
-    const { handle, schema, querySchema }: Resource = getModule();
+      const { handle, schema, querySchema }: Resource = getModule();
 
-    fastifyInstance[method](parsedRoute, async (request, reply) => {
-      try {
-        const queryData = await validate(querySchema, request.query);
-        const bodyData = await validate(schema, request.body);
+      fastifyInstance[method](parsedRoute, async (request, reply) => {
+        try {
+          const queryData = await validate(querySchema, request.query);
+          const bodyData = await validate(schema, request.body);
 
-        const response = await handle(
-          context,
-          {
-            ...request,
-            body: bodyData,
-            rawBody: request.body,
-            query: queryData,
-            rawQuery: request.query,
-          },
-          reply
-        );
+          const response = await handle(
+            context,
+            {
+              ...request,
+              body: bodyData,
+              rawBody: request.body,
+              query: queryData,
+              rawQuery: request.query,
+            },
+            reply
+          );
 
-        reply.send(response);
-      } catch (e) {
-        reply.status(500).send("Internal Error");
-        console.error(e);
-      }
-    });
-  }
+          reply.send(response);
+        } catch (e) {
+          reply.status(500).send("Internal Error");
+          console.error(e);
+        }
+      });
+    }
+  });
 }

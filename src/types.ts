@@ -8,10 +8,15 @@ export type RouteSchema = {
   getModule: () => any;
 };
 
+export type MiddlewareResource = {
+  handle: (context: unknown, request: FastifyRequest) => unknown;
+  excludePaths: string[];
+};
+
 export type MiddlewareSchema = {
   filePath: string;
   scope: string;
-  getModule: () => any;
+  getModule: () => MiddlewareResource;
 };
 
 export type Resource = {

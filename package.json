@@ -1,6 +1,6 @@
 {
   "name": "@woen4/higher",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "description": "",
   "keywords": [],
   "author": "",
@@ -31,12 +31,13 @@
     "prepack": "npm run build"
   },
   "dependencies": {
+    "chalk": "^4.1.2",
     "glob": "^9.2.1"
   },
   "peerDependencies": {
-    "zod": "^3.21.4",
     "@fastify/middie": "^8.1.0",
-    "fastify": "^4.15.0"
+    "fastify": "^4.15.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/connect": "^3.4.35",
