@@ -1,12 +1,12 @@
 import { HttpStatus } from "./httpStatus";
 
 export class HigherResponse {
-  status: HttpStatus;
+  status: HttpStatus | number;
   payload: any;
   headers: Record<string, string | number>;
 
   constructor(
-    status: HttpStatus,
+    status: HttpStatus | number,
     payload?: any,
     headers?: Record<string, string | number>
   ) {
@@ -17,7 +17,7 @@ export class HigherResponse {
 }
 
 export const HigherResponseBuilder = (
-  status: HttpStatus,
+  status: HttpStatus | number,
   payload?: any,
   headers?: Record<string, string | number>
 ) => new HigherResponse(status, payload, headers || {});
