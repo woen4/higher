@@ -1,4 +1,4 @@
-import { writeFile } from "fs";
+import { writeFile } from "fs/promises";
 import path from "path";
 import { mapDirectory } from "../core/directoryMapper";
 
@@ -23,11 +23,9 @@ export const generateSchemaScript = async (
 
   writeFile(
     path.resolve(__dirname, "..", "generated", "schema.js"),
-    schemaFileContent,
-    () => {
-      console.log("Generated route schema !");
-    }
+    schemaFileContent
   );
+
   writeFile(
     path.resolve(
       __dirname,
@@ -39,10 +37,7 @@ export const generateSchemaScript = async (
       "generated",
       "schema.js"
     ),
-    schemaFileContent,
-    () => {
-      console.log("Generated route schema !");
-    }
+    schemaFileContent
   );
 
   /*   watch(path.resolve(projectDir))

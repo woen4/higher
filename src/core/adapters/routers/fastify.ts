@@ -6,6 +6,7 @@ import {
   RouteSchema,
 } from "../../../types";
 import { z } from "zod";
+import chalk from "chalk";
 
 export type SetupFastifyParams = {
   routes: RouteSchema[];
@@ -79,42 +80,40 @@ function registerRoutes(
   context: any,
   fastifyInstance: FastifyInstance
 ) {
-  import("chalk").then(({ default: chalk }) => {
-    for (const { route, method, getModule } of routes) {
-      const parsedRoute = route.replace(/\[(.*?)\]/g, ":$1");
+  for (const { route, method, getModule } of routes) {
+    const parsedRoute = route.replace(/\[(.*?)\]/g, ":$1");
 
-      console.log(
-        chalk.green(`Mapped route `) +
-          chalk.yellowBright("-") +
-          chalk.green(` ${method.toUpperCase()}`) +
-          chalk.yellowBright(` ${parsedRoute}`)
-      );
+    console.log(
+      chalk.green(`Mapped route `) +
+        chalk.yellowBright("-") +
+        chalk.green(` ${method.toUpperCase()}`) +
+        chalk.yellowBright(` ${parsedRoute}`)
+    );
 
-      const { handle, schema, querySchema }: Resource = getModule();
+    const { handle, schema, querySchema }: Resource = getModule();
 
-      fastifyInstance[method](parsedRoute, async (request, reply) => {
-        try {
-          const queryData = await validate(querySchema, request.query);
-          const bodyData = await validate(schema, request.body);
+    fastifyInstance[method](parsedRoute, async (request, reply) => {
+      try {
+        const queryData = await validate(querySchema, request.query);
+        const bodyData = await validate(schema, request.body);
 
-          const response = await handle(
-            context,
-            {
-              ...request,
-              body: bodyData,
-              rawBody: request.body,
-              query: queryData,
-              rawQuery: request.query,
-            },
-            reply
-          );
+        const response = await handle(
+          context,
+          {
+            ...request,
+            body: bodyData,
+            rawBody: request.body,
+            query: queryData,
+            rawQuery: request.query,
+          },
+          reply
+        );
 
-          reply.send(response);
-        } catch (e) {
-          reply.status(500).send("Internal Error");
-          console.error(e);
-        }
-      });
-    }
-  });
+        reply.send(response);
+      } catch (e) {
+        reply.status(500).send(e.message);
+        console.error(chalk.red(e));
+      }
+    });
+  }
 }

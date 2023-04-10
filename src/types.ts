@@ -5,7 +5,7 @@ export type RouteSchema = {
   filePath: string;
   route: string;
   method: "get" | "post" | "patch" | "delete" | "patch" | "options";
-  getModule: () => any;
+  getModule: () => Resource;
 };
 
 export type MiddlewareResource = {
