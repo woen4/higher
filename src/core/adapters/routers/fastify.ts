@@ -7,6 +7,9 @@ import {
 } from "../../../types";
 import { z } from "zod";
 import chalk from "chalk";
+import { HigherResponse } from "../../utils";
+import fastifyMiddie from "@fastify/middie";
+import type { Server } from "connect";
 
 export type SetupFastifyParams = {
   routes: RouteSchema[];
@@ -40,29 +43,31 @@ function registerMiddlewares(
   context: unknown,
   fastifyInstance: FastifyInstance
 ) {
-  for (const { scope, getModule } of middlewares) {
-    //
-    fastifyInstance.addHook("preParsing", async (request) => {
-      if (request.url.includes(scope)) {
-        const { handle, excludePaths }: MiddlewareResource = getModule();
-        [];
-        const shouldSkip = excludePaths.some((path) =>
-          request.url.includes(path)
-        );
+  fastifyInstance.addHook("preParsing", async (request) => {
+    const targetMiddleware = middlewares.find((middleware) =>
+      request.url.includes(middleware.scope)
+    );
 
-        if (!shouldSkip) return;
+    if (!targetMiddleware) return;
 
-        await handle(context, request);
-      }
-    });
-  }
+    console.log("params", request.params);
 
-  /*  fastifyInstance.register(middie, { hook: "preParsing" }).then(() => {
-    for (const { scope, getModule } of middlewares) {
-      const { handle } = getModule();
-      (fastifyInstance as unknown as Server).use(scope, handle);
-    }
-  }); */
+    const { handle, excludePaths }: MiddlewareResource =
+      targetMiddleware.getModule();
+
+    const urlWithParams = Object.keys(request.params).reduce(
+      (url, paramKey) => url.replace(request.params[paramKey], `:${paramKey}`),
+      request.url
+    );
+
+    const shouldSkip = excludePaths
+      ? excludePaths.some((path) => urlWithParams.includes(path))
+      : false;
+
+    if (shouldSkip) return;
+
+    await handle(context, request);
+  });
 }
 const validate = async (schema: z.AnyZodObject, payload: unknown) => {
   if (!schema) return payload;
@@ -109,7 +114,14 @@ function registerRoutes(
           reply
         );
 
-        reply.send(response);
+        if (response instanceof HigherResponse) {
+          return reply
+            .status(response.status)
+            .headers(response.headers)
+            .send(response.payload);
+        } else {
+          return response;
+        }
       } catch (e) {
         reply.status(500).send(e.message);
         console.error(chalk.red(e));

@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+import { HigherResponse } from "./core/utils";
 
 export type RouteSchema = {
   filePath: string;
@@ -20,12 +21,16 @@ export type MiddlewareSchema = {
 };
 
 export type Resource = {
-  handle: (context: unknown, request: unknown, reply?: unknown) => unknown;
+  handle: (
+    context: unknown,
+    request: unknown,
+    reply?: unknown
+  ) => Promise<string | HigherResponse | object>;
   schema?: z.AnyZodObject;
   querySchema?: z.AnyZodObject;
 };
 
-export type HigherResponse = FastifyReply;
+export type HigherReply = FastifyReply;
 
 export type HigherRequest<
   Super extends {} | void = void,
