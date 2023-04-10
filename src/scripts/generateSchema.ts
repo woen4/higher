@@ -16,16 +16,17 @@ export const generateSchemaScript = async (
     )
     //Remove .ts extension in import
     .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-    .replace(/src/g, outDir);
+    //Rename path directory
+    .replace(/(src)\/((modules)|(providers)|(middlewares))/g, `${outDir}/$2`);
 
   const schemaFileContent = `exports.schema = ${updatedSchema}`;
 
-  await writeFile(
+  writeFile(
     path.resolve(__dirname, "..", "generated", "schema.js"),
     schemaFileContent
   );
 
-  await writeFile(
+  writeFile(
     path.resolve(
       __dirname,
       "..",
@@ -38,8 +39,6 @@ export const generateSchemaScript = async (
     ),
     schemaFileContent
   );
-
-  console.log("Generated route schema !");
 
   /*   watch(path.resolve(projectDir))
     .on("ready", () => {

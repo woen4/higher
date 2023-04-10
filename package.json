@@ -1,18 +1,22 @@
 {
-  "name": "@woen4/higher",
-  "version": "0.0.51",
+  "name": "higher-js",
+  "version": "0.0.1",
   "description": "",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bin": "./lib/src/cli/index.js",
-  "types": "./lib/types/index.d.ts",
-  "main": "./lib/index.js",
+  "bin": "./lib/cjs/src/cli/index.js",
+  "types": "./lib/cjs/types/index.d.ts",
+  "main": "./lib/cjs/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/types/index.d.ts",
-        "default": "./lib/index.js"
+        "types": "./lib/esm/types/index.d.ts",
+        "default": "./lib/esm/index.js"
+      },
+      "require": {
+        "types": "./lib/cjs/types/index.d.ts",
+        "default": "./lib/cjs/index.js"
       }
     }
   },
@@ -21,21 +25,25 @@
   ],
   "scripts": {
     "clean": "rm -rf ./lib",
-    "build": "npm run clean && tsc -p ./configs/tsconfig.json && tsc -p ./configs/tsconfig.scripts.json",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p ./configs/tsconfig.esm.json && tsc -p ./configs/tsconfig.scripts.json",
+    "build:cjs": "tsc -p ./configs/tsconfig.cjs.json",
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@vercel/ncc": "^0.36.1",
-    "glob": "^9.2.1",
-    "hono": "^3.1.2",
-    "tsup": "^6.6.3",
-    "typescript": "^5.0.2",
-    "wrangler": "^2.13.0",
+    "chalk": "^4.1.2",
+    "glob": "^9.2.1"
+  },
+  "peerDependencies": {
+    "@fastify/middie": "^8.1.0",
+    "fastify": "^4.15.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.35",
     "@types/node": "^18.14.6",
     "@types/prettier": "^2.7.2",
-    "prettier": "^2.8.6"
+    "prettier": "^2.8.6",
+    "typescript": "^5.0.2"
   }
 }

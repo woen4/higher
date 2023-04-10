@@ -1,25 +1,16 @@
-import path from "path";
+import chalk from "chalk";
 import { exec } from "child_process";
-import { mapDirectory } from "../core/directoryMapper";
-import { writeFile } from "fs/promises";
+import { generateSchemaScript } from "./generateSchema";
 
-export const buildScript = async (projectDir: string) => {
-  const schema = await mapDirectory(path.resolve(projectDir, "src"));
+export const buildScript = async (projectDir: string, outDir: string) => {
+  console.log(chalk.green("Generating routes schema..."));
+  await generateSchemaScript(projectDir, outDir);
 
-  const updatedSchema = JSON.stringify(schema)
-    //Apply getModule property
-    .replace(
-      /"filePath":\s*"([^"]+)?"/g,
-      '"filePath": "$1", "getModule": () => require("$1")'
-    )
-    //Remove .ts extension in import
-    .replace(/require\("(.*?).ts"\)/g, 'require("$1")')
-    .replace(/src/g, "dist");
+  console.log(chalk.green("Starting build..."));
 
-  await writeFile(
-    path.resolve(__dirname, "..", "generated", "schema.js"),
-    `exports.schema = ${updatedSchema}`
+  const buildCProcess = exec(
+    `npx tsup src '!**/*.spec.*' '!**/*.mock.*' '!get**/*.test.*' --minify -d ${outDir}`
   );
-
-  exec("npx ncc build src/index.ts").stdout.pipe(process.stdout);
+  buildCProcess.stderr.pipe(process.stderr);
+  buildCProcess.stdout.pipe(process.stdout);
 };

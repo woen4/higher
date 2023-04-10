@@ -1,9 +1,9 @@
+import { FastifyServerOptions } from "fastify";
 import { schema } from "../generated/schema";
-import { Hono } from "hono";
-import { setupHono } from "./adapters/routers/hono";
+import { setupFastify } from "./adapters/routers/fastify";
 
-export const bootstrap = (options?: Pick<Hono, "router" | "strict">) => {
-  return setupHono({
+export const bootstrap = (options?: FastifyServerOptions) => {
+  return setupFastify({
     ...schema,
     options,
   } as any);
