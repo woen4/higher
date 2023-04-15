@@ -50,8 +50,6 @@ function registerMiddlewares(
 
     if (!targetMiddleware) return;
 
-    console.log("params", request.params);
-
     const { handle, excludePaths }: MiddlewareResource =
       targetMiddleware.getModule();
 
