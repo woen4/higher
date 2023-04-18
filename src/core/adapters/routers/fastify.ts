@@ -43,7 +43,7 @@ function registerMiddlewares(
   context: unknown,
   fastifyInstance: FastifyInstance
 ) {
-  fastifyInstance.addHook("preParsing", async (request) => {
+  fastifyInstance.addHook("preHandler", async (request, reply) => {
     const targetMiddleware = middlewares.find((middleware) =>
       request.url.includes(middleware.scope)
     );
@@ -64,7 +64,18 @@ function registerMiddlewares(
 
     if (shouldSkip) return;
 
-    await handle(context, request);
+    const response = await handle(context, request, reply);
+
+    if (response) {
+      if (response instanceof HigherResponse) {
+        reply
+          .status(response.status)
+          .headers(response.headers)
+          .send(response.payload);
+      } else {
+        reply.send(response);
+      }
+    }
   });
 }
 const validate = async (schema: z.AnyZodObject, payload: unknown) => {

@@ -10,7 +10,11 @@ export type RouteSchema = {
 };
 
 export type MiddlewareResource = {
-  handle: (context: unknown, request: FastifyRequest) => unknown;
+  handle: (
+    context: unknown,
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => unknown;
   excludePaths: string[];
 };
 
