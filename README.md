@@ -28,19 +28,13 @@ and was built-in using:
 ## In pratice:
 
 Higher follow a well defined structure, let's start with a route to retrieve users
-<div style="margin-left: 30px;">
+<pre>
 📁 src
-  <div style="margin-left: 15px;">
   📁 modules
-    <div style="margin-left: 15px;">
     📁 users
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-    </div>
     📄 index.ts
-  </div>
-</div>
+</pre>
 <br/>
 
 **get.ts** :
@@ -67,25 +61,15 @@ now let's say you need to use something to access your database in that function
 
 so you need create a folder **providers** in **src** directory and exports a object from there
 
-<div style="margin-left: 30px;">
+<pre>
 📁 src
-  <div style="margin-left: 15px;">
   📁 modules
-    <div style="margin-left: 15px;">
     📁 users
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-    </div>
-  </div>
-   <div style="margin-left: 15px;">
   📁 providers
-    <div style="margin-left: 15px;">
-      📄 index.ts<br/>
+      📄 index.ts
       📄 prisma.ts
-    </div>
-  </div>
-</div>
+</pre>
 <br/>
 
 **prisma.ts** :
@@ -155,31 +139,17 @@ Ok, but I need of a middleware to authenticate my routes, how do it?. Also is ve
 
 Create a file named **middleware.ts** inside the **modules** folder and it will be apply to all routes, otherwise if you put your middleware file inside the **users** folder, it will only apply to **users** routes
 
-<div style="margin-left: 30px;">
+<pre>
 📁 src
-  <div style="margin-left: 15px;">
   📁 modules
-    <div style="margin-left: 15px;">
     📄 middleware.ts
-    </div>
-    <div style="margin-left: 15px;">
     📁 users
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-    </div>
-  </div>
-   <div style="margin-left: 15px;">
   📁 providers
-    <div style="margin-left: 15px;">
-      📄 index.ts<br/>
+      📄 index.ts
       📄 prisma.ts
-    </div>
-  </div>
-</div>
+</pre>
 <br/>
 
 **middleware.ts**
@@ -210,37 +180,19 @@ Create a file named **middleware.ts** inside the **modules** folder and it will 
 
 One more question, how to create routes with parameters? Simple and plain
 
-<div style="margin-left: 30px;">
+<pre>
 📁 src
-  <div style="margin-left: 15px;">
   📁 modules
-    <div style="margin-left: 15px;">
     📄 middleware.ts
-    </div>
-    <div style="margin-left: 15px;">
     📁 users
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-      <div style="margin-left: 15px;">
       📄 get.ts
-      </div>
-      <div style="margin-left: 15px;">
       📁 [userId]
-        <div style="margin-left: 15px;">
         📄 get.ts
-        </div>
-      </div>
-    </div>
-  </div>
-   <div style="margin-left: 15px;">
   📁 providers
-    <div style="margin-left: 15px;">
-      📄 index.ts<br/>
+      📄 index.ts
       📄 prisma.ts
-    </div>
-  </div>
-</div>
+</pre>
 <br/>
 
 **[userId]/get.ts**
