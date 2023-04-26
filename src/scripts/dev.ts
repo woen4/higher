@@ -25,7 +25,7 @@ export const devScript = async (projectDir: string, outDir: string) => {
   console.log(chalk.green("Starting server in watch mode..."));
 
   const buildCProcess = exec(
-    `npx tsup src --watch --onSuccess 'FORCE_COLOR=3 node ${outDir}/index.js' -d ${outDir}`
+    `npx tsup src --watch --clean --onSuccess 'FORCE_COLOR=3 node ${outDir}/index.js' -d ${outDir}`
   );
   buildCProcess.stderr.pipe(process.stderr);
   buildCProcess.stdout.pipe(customStdout);

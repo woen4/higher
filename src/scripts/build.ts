@@ -9,7 +9,7 @@ export const buildScript = async (projectDir: string, outDir: string) => {
   console.log(chalk.green("Starting build..."));
 
   const buildCProcess = exec(
-    `npx tsup src '!**/*.spec.*' '!**/*.mock.*' '!get**/*.test.*' --minify -d ${outDir}`
+    `npx tsup src '!**/*.spec.*' '!**/*.mock.*' '!get**/*.test.*' --minify --clean -d ${outDir}`
   );
   buildCProcess.stderr.pipe(process.stderr);
   buildCProcess.stdout.pipe(process.stdout);
