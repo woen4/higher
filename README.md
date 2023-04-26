@@ -1,13 +1,12 @@
 # Higher
-## File-based HTTP router
-&nbsp;
 
-Higher was built thinking in some requirements
+Higher is a framework it was built thinking in some requirements
 - The minimum of code lines to create an endpoint
 - Files with a unique responsibilty, representing a unique endpoint
 - Easy to test
 - Performance
 - Good developer experience
+- And that it works well in a serverless environment
 
 &nbsp;
 
@@ -25,7 +24,13 @@ and was built-in using:
 - Tsup (Dev server and build process is very fast)
 
 &nbsp;
-## In pratice:
+## How to install:
+```
+  npx create-higher-app
+```
+
+&nbsp;
+## Initial guide:
 
 Higher follow a well defined structure, let's start with a route to retrieve users
 <pre>
@@ -54,7 +59,7 @@ Higher follow a well defined structure, let's start with a route to retrieve use
   server.listen(3000)
 ```
 
-On run npm higher dev, this will run your server exposing a route **/users** of method **GET**
+On run dev script, this will run your server exposing a route **/users** of method **GET**
 
 <br/>
 now let's say you need to use something to access your database in that function,
@@ -206,3 +211,7 @@ One more question, how to create routes with parameters? Simple and plain
     return ctx.prisma.users.findFirst({ where: { id: user.id } })
   }
 ```
+
+&nbsp;
+## Full documention:
+is coming...
