@@ -27,11 +27,12 @@ export type MiddlewareSchema = {
 export type Resource = {
   handle: (
     context: unknown,
-    request: unknown,
+    request: HigherRequest,
     reply?: unknown
   ) => Promise<string | HigherResponse | object>;
   schema?: z.AnyZodObject;
   querySchema?: z.AnyZodObject;
+  requirements?: ((req: HigherRequest) => Promise<HigherResponse | void>)[];
 };
 
 export type HigherReply = FastifyReply;

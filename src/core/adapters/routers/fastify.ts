@@ -1,9 +1,14 @@
-import Fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import Fastify, {
+  FastifyInstance,
+  FastifyRequest,
+  FastifyServerOptions,
+} from "fastify";
 import {
   MiddlewareSchema,
   MiddlewareResource,
   Resource,
   RouteSchema,
+  HigherRequest,
 } from "../../../types";
 import { z } from "zod";
 import chalk from "chalk";
@@ -104,37 +109,46 @@ function registerRoutes(
         chalk.yellowBright(` ${parsedRoute}`)
     );
 
-    const { handle, schema, querySchema }: Resource = getModule();
+    const { handle, schema, querySchema, requirements }: Resource = getModule();
 
-    fastifyInstance[method](parsedRoute, async (request, reply) => {
-      try {
-        const queryData = await validate(querySchema, request.query);
-        const bodyData = await validate(schema, request.body);
+    fastifyInstance[method](
+      parsedRoute,
+      async (request: HigherRequest, reply) => {
+        try {
+          const queryData = await validate(querySchema, request.query);
+          const bodyData = await validate(schema, request.body);
 
-        const response = await handle(
-          context,
-          {
-            ...request,
-            body: bodyData,
-            rawBody: request.body,
-            query: queryData,
-            rawQuery: request.query,
-          },
-          reply
-        );
+          request.body = bodyData;
+          request.rawBody = request.body;
+          request.query = queryData;
+          request.rawQuery = request.query as HigherRequest["rawQuery"];
 
-        if (response instanceof HigherResponse) {
-          return reply
-            .status(response.status)
-            .headers(response.headers)
-            .send(response.payload);
-        } else {
-          return response;
+          for (const requirement of requirements ?? []) {
+            const response = await requirement(request);
+
+            if (response instanceof HigherResponse) {
+              return reply
+                .status(response.status)
+                .headers(response.headers)
+                .send(response.payload);
+            }
+          }
+
+          const response = await handle(context, request, reply);
+
+          if (response instanceof HigherResponse) {
+            return reply
+              .status(response.status)
+              .headers(response.headers)
+              .send(response.payload);
+          } else {
+            return response;
+          }
+        } catch (e) {
+          reply.status(500).send(e.message);
+          console.error(chalk.red(e));
         }
-      } catch (e) {
-        reply.status(500).send(e.message);
-        console.error(chalk.red(e));
       }
-    });
+    );
   }
 }
